@@ -58,6 +58,17 @@ def list_tasks():
         print(f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']}")
     print()
 
+def complete_task(task_id):
+    """Mark a task as completed."""
+    tasks = load_tasks()
+    for task in tasks:
+        if task["id"] == task_id:
+            task["status"] = "Completed"
+            save_tasks(tasks)
+            print(f"🎉 Task '{task['title']}' marked as completed!")
+            return
+    print("❌ Task ID not found.")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Simple Task Scheduler")
@@ -66,6 +77,7 @@ def main():
     parser.add_argument("--desc", type=str, help="Task description")
     parser.add_argument("--due", type=str, help="Due date (YYYY-MM-DD)")
     parser.add_argument("--list", action="store_true", help="List all tasks")
+    parser.add_argument("--complete", type=int, help="Mark a task as completed by ID")
 
     args = parser.parse_args()
 
@@ -76,6 +88,8 @@ def main():
             add_task(args.title, args.desc, args.due)
     elif args.list:
         list_tasks()
+    elif args.complete:
+        complete_task(args.complete)
     else:
         parser.print_help()
 
