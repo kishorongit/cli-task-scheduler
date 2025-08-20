@@ -69,6 +69,18 @@ def complete_task(task_id):
             return
     print("❌ Task ID not found.")
 
+def delete_task(task_id):
+    """Delete a task by ID."""
+    tasks = load_tasks()
+    updated_tasks = [task for task in tasks if task["id"] != task_id]
+
+    if len(updated_tasks) == len(tasks):
+        print("❌ Task ID not found.")
+        return
+
+    save_tasks(updated_tasks)
+    print(f"🗑️ Task {task_id} deleted successfully.")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Simple Task Scheduler")
@@ -78,6 +90,7 @@ def main():
     parser.add_argument("--due", type=str, help="Due date (YYYY-MM-DD)")
     parser.add_argument("--list", action="store_true", help="List all tasks")
     parser.add_argument("--complete", type=int, help="Mark a task as completed by ID")
+    parser.add_argument("--delete", type=int, help="Delete a task by ID")
 
     args = parser.parse_args()
 
@@ -90,6 +103,8 @@ def main():
         list_tasks()
     elif args.complete:
         complete_task(args.complete)
+    elif args.delete:
+        delete_task(args.delete)
     else:
         parser.print_help()
 
