@@ -45,6 +45,19 @@ def add_task(title, desc, due_date):
     save_tasks(tasks)
     print(f" ✅ Task '{title}' added successfully!")
 
+def list_tasks():
+    """Display all tasks."""
+    tasks = load_tasks()
+    if not tasks:
+        print("📭 No tasks found.")
+        return
+
+    print("\n📋 Your Tasks:")
+    for task in tasks:
+        status_symbol = "✅" if task["status"] == "Completed" else "⏳"
+        print(f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']}")
+    print()
+
 
 def main():
     parser = argparse.ArgumentParser(description="Simple Task Scheduler")
@@ -52,6 +65,7 @@ def main():
     parser.add_argument("--title", type=str, help="Task title")
     parser.add_argument("--desc", type=str, help="Task description")
     parser.add_argument("--due", type=str, help="Due date (YYYY-MM-DD)")
+    parser.add_argument("--list", action="store_true", help="List all tasks")
 
     args = parser.parse_args()
 
@@ -60,6 +74,8 @@ def main():
             print(" ❌ Please provide --title, --desc, and --due for adding a task.")
         else:
             add_task(args.title, args.desc, args.due)
+    elif args.list:
+        list_tasks()
     else:
         parser.print_help()
 
