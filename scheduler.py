@@ -1,7 +1,7 @@
 import json
 import argparse
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from colorama import Fore, Style, init
 
 # Initialize colorama
@@ -27,7 +27,7 @@ def save_tasks(tasks):
         json.dump(tasks, f, indent=4)
 
 
-def add_task(title, desc, due_date):
+def add_task(title, desc, due_date, recurrence="none"):
     """Add a new task with title, description, and due date."""
     tasks = load_tasks()
     task_id = 1 if not tasks else tasks[-1]["id"] + 1
@@ -43,7 +43,8 @@ def add_task(title, desc, due_date):
         "title": title,
         "description": desc,
         "due_date": due_date,
-        "status": "Pending"
+        "status": "Pending",
+        "recurrence": recurrence
     }
     tasks.append(new_task)
     save_tasks(tasks)
@@ -79,7 +80,8 @@ def list_tasks():
         else:
             color = Fore.WHITE
             reminder = ""
-        print(color + f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']} {reminder}")
+        recurrence = f"(↻ {task['recurrence']})" if task["recurrence"] != "none" else ""
+        print(color + f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']} {recurrence} {reminder}")
     print(Style.RESET_ALL)
 
 def complete_task(task_id):
@@ -87,9 +89,24 @@ def complete_task(task_id):
     tasks = load_tasks()
     for task in tasks:
         if task["id"] == task_id:
-            task["status"] = "Completed"
+            if task["recurrence"] == "none":
+                task["status"] = "Completed"
+                print(Fore.GREEN + f" 🎉  Task '{task['title']}' marked as completed!")
+            else:
+                # Reschedule recurring task
+                due_date = datetime.strptime(task["due_date"], "%Y-%m-%d").date()
+                if task["recurrence"] == "daily":
+                    next_due = due_date + timedelta(days=1)
+                elif task["recurrence"] == "weekly":
+                    next_due = due_date + timedelta(weeks=1)
+                else:
+                    next_due = due_date
+
+                task["due_date"] = next_due.strftime("%Y-%m-%d")
+                task["status"] = "Pending"
+                print(Fore.BLUE + f" 🔁  Task '{task['title']}' rescheduled for {task['due_date']}.")
+
             save_tasks(tasks)
-            print(Fore.GREEN + f" 🎉  Task '{task['title']}' marked as completed!")
             return
     print(Fore.RED + " ❌ Task ID not found.")
 
@@ -112,6 +129,8 @@ def main():
     parser.add_argument("--title", type=str, help="Task title")
     parser.add_argument("--desc", type=str, help="Task description")
     parser.add_argument("--due", type=str, help="Due date (YYYY-MM-DD)")
+    parser.add_argument("--recurrence", type=str, choices=["none", "daily", "weekly"],
+                        default="none", help="Task recurrence: none, daily, weekly")
     parser.add_argument("--list", action="store_true", help="List all tasks")
     parser.add_argument("--complete", type=int, help="Mark a task as completed by ID")
     parser.add_argument("--delete", type=int, help="Delete a task by ID")
@@ -122,7 +141,7 @@ def main():
         if not args.title or not args.desc or not args.due:
             print(Fore.RED + " ❌ Please provide --title, --desc, and --due for adding a task.")
         else:
-            add_task(args.title, args.desc, args.due)
+            add_task(args.title, args.desc, args.due, args.recurrence)
     elif args.list:
         list_tasks()
     elif args.complete:
