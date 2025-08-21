@@ -40,8 +40,20 @@ cd task-scheduler
 ### Add a new task
 ```bash
 python scheduler.py --add --title "Finish Assignment" --desc "Submit by tomorrow" --due "2025-08-20"
+python scheduler.py --add --title "Finish Report" --desc "Prepare monthly report" --due 2025-08-21""
+python scheduler.py --add --title "Prepare Slides" --desc "Presentation for Friday" --due 2025-08-22"
+
 ```
 
+### Add a recurring daily task
+```bash
+python scheduler.py --add --title "Morning Workout" --desc "30 min exercise" --due 2025-08-20 --recurrence daily
+```
+
+### Add a weekly task
+```bash
+python scheduler.py --add --title "Team Meeting" --desc "Weekly sync-up" --due 2025-08-21 --recurrence weekly
+```
 ### View all tasks
 ```bash
 python scheduler.py --list
