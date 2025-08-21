@@ -23,7 +23,7 @@ interaction**.
 ## 🛠️ Tech Stack
 
 - **Language:** Python 3.x
-- **Libraries:** `argparse`, `json`, `datetime`, `os`
+- **Libraries:** `argparse`, `json`, `datetime`, `os`, `coloroma`
 
 ---
 
