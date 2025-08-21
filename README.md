@@ -14,6 +14,9 @@ interaction**.
 - ✅ Delete tasks by ID
 - ✅ Store tasks in a JSON file for persistence
 - ✅ Error handling for invalid inputs and file operations
+- ✅ Print a warning when a task is due today or overdue
+- ✅ Highlight pending vs completed tasks for enhanced user experience
+- ✅ Support recurring tasks
 
 ---
 
