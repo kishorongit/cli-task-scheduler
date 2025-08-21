@@ -2,6 +2,10 @@ import json
 import argparse
 import os
 from datetime import datetime
+from colorama import Fore, Style, init
+
+# Initialize colorama
+init(autoreset=True)
 
 TASKS_FILE = "tasks.json"
 
@@ -31,7 +35,7 @@ def add_task(title, desc, due_date):
     try:
         datetime.strptime(due_date, "%Y-%m-%d")  # validate date
     except ValueError:
-        print(" ❌ Invalid date format. Use YYYY-MM-DD.")
+        print(Fore.RED + " ❌ Invalid date format. Use YYYY-MM-DD.")
         return
 
     new_task = {
@@ -43,36 +47,40 @@ def add_task(title, desc, due_date):
     }
     tasks.append(new_task)
     save_tasks(tasks)
-    print(f" ✅ Task '{title}' added successfully!")
+    print(Fore.GREEN + f" ✅ Task '{title}' added successfully!")
 
 def list_tasks():
     """Display all tasks with reminders."""
     tasks = load_tasks()
     if not tasks:
-        print("📭 No tasks found.")
+        print(Fore.YELLOW + " 📭 No tasks found.")
         return
 
     today = datetime.today().date()
-    print("\n📋 Your Tasks:")
+    print(Fore.CYAN + "\n 📋 Your Tasks:")
     for task in tasks:
         due_date = datetime.strptime(task["due_date"], "%Y-%m-%d").date()
         status_symbol = "✅" if task["status"] == "Completed" else "⏳"
 
-        # Decide reminder
+        # Decide color and reminder
         # If the task is completed
         if task["status"] == "Completed":
+            color = Fore.GREEN
             reminder = ""
         # If the due date has passed
         elif due_date < today:
-            reminder = " ⚠️ Overdue!"
+            color = Fore.RED
+            reminder = "⚠️  Overdue!"
         # If the task is due today
         elif due_date == today:
+            color = Fore.YELLOW
             reminder = " ⏰ Due Today!"
         # Otherwise
         else:
+            color = Fore.WHITE
             reminder = ""
-        print(f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']} {reminder}")
-    print()
+        print(color + f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']} {reminder}")
+    print(Style.RESET_ALL)
 
 def complete_task(task_id):
     """Mark a task as completed."""
@@ -81,9 +89,9 @@ def complete_task(task_id):
         if task["id"] == task_id:
             task["status"] = "Completed"
             save_tasks(tasks)
-            print(f"🎉 Task '{task['title']}' marked as completed!")
+            print(Fore.GREEN + f" 🎉  Task '{task['title']}' marked as completed!")
             return
-    print("❌ Task ID not found.")
+    print(Fore.RED + " ❌ Task ID not found.")
 
 def delete_task(task_id):
     """Delete a task by ID."""
@@ -91,11 +99,11 @@ def delete_task(task_id):
     updated_tasks = [task for task in tasks if task["id"] != task_id]
 
     if len(updated_tasks) == len(tasks):
-        print("❌ Task ID not found.")
+        print(Fore.RED + " ❌ Task ID not found.")
         return
 
     save_tasks(updated_tasks)
-    print(f"🗑️ Task {task_id} deleted successfully.")
+    print(Fore.MAGENTA + f"🗑️  Task {task_id} deleted successfully.")
 
 
 def main():
@@ -112,7 +120,7 @@ def main():
 
     if args.add:
         if not args.title or not args.desc or not args.due:
-            print(" ❌ Please provide --title, --desc, and --due for adding a task.")
+            print(Fore.RED + " ❌ Please provide --title, --desc, and --due for adding a task.")
         else:
             add_task(args.title, args.desc, args.due)
     elif args.list:
