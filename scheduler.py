@@ -46,16 +46,32 @@ def add_task(title, desc, due_date):
     print(f" ✅ Task '{title}' added successfully!")
 
 def list_tasks():
-    """Display all tasks."""
+    """Display all tasks with reminders."""
     tasks = load_tasks()
     if not tasks:
         print("📭 No tasks found.")
         return
 
+    today = datetime.today().date()
     print("\n📋 Your Tasks:")
     for task in tasks:
+        due_date = datetime.strptime(task["due_date"], "%Y-%m-%d").date()
         status_symbol = "✅" if task["status"] == "Completed" else "⏳"
-        print(f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']}")
+
+        # Decide reminder
+        # If the task is completed
+        if task["status"] == "Completed":
+            reminder = ""
+        # If the due date has passed
+        elif due_date < today:
+            reminder = " ⚠️ Overdue!"
+        # If the task is due today
+        elif due_date == today:
+            reminder = " ⏰ Due Today!"
+        # Otherwise
+        else:
+            reminder = ""
+        print(f"ID: {task['id']} | {status_symbol} {task['title']} | Due: {task['due_date']} | Status: {task['status']} {reminder}")
     print()
 
 def complete_task(task_id):
