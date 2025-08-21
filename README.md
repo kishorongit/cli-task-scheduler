@@ -32,7 +32,7 @@ interaction**.
 Clone the repository:
 ```bash
 git clone https://github.com/kishorongit/cli-task-scheduler.git
-cd task-scheduler
+cd cli-task-scheduler
 ```
 
 ## 🚀 Usage
@@ -71,7 +71,7 @@ python scheduler.py --delete 3
 
 ## 📂 Project Structure
 ```pgsql
-task-scheduler/
+cli-task-scheduler/
 ├── scheduler.py
 ├── tasks.json
 ├── .gitignore
