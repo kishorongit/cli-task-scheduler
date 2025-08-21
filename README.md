@@ -40,8 +40,8 @@ cd cli-task-scheduler
 ### Add a new task
 ```bash
 python scheduler.py --add --title "Finish Assignment" --desc "Submit by tomorrow" --due "2025-08-20"
-python scheduler.py --add --title "Finish Report" --desc "Prepare monthly report" --due 2025-08-21""
-python scheduler.py --add --title "Prepare Slides" --desc "Presentation for Friday" --due 2025-08-22"
+python scheduler.py --add --title "Finish Report" --desc "Prepare monthly report" --due "2025-08-21"
+python scheduler.py --add --title "Prepare Slides" --desc "Presentation for Friday" --due "2025-08-22"
 
 ```
 
